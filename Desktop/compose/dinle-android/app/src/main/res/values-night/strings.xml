@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="news_t">Täzelikler</string>
+    <string name="theme">Tema</string>
+    <string name="addressing">Salgylanma</string>
+    <string name="call_us">Biz bilen habarlasmak</string>
+    <string name="to_next">Indika gosmak</string>
+    <string name="afisha">Bildirisler</string>
+    <string name="t_rkmen_top_10">Türkmen TOP 10</string>
+    <string name="world_top_song">Dünýä TOP</string>
+    <string name="tm_top_10">Türkmen TOP 10</string>
+    <string name="last_listened">Sonky dinlenenler</string>
+</resources>

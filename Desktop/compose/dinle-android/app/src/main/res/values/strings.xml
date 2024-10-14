@@ -1,0 +1,115 @@
+<resources>
+    <string name="app_name">Diňle</string>
+    <string name="no_connection">Internet ýok 🤔</string>
+    <string name="phone_number">Telefon belgiňiz</string>
+    <string name="continue_string">Agza bol</string>
+    <string name="enter_verification_code">SMS kod:</string>
+    <string name="enter_verification_code_desc">Kod %1$s belgä ugradyldy!</string>
+    <string name="change_number">Telefon belgini üýtgetmek</string>
+    <string name="resend_code">Täzeden ugratmak! 😢</string>
+    <string name="invalid_code_desc">Kod ýalňyş girizilen. Kody täzeden ibermäge synanşyň! 😨</string>
+    <string name="main">Esasy</string>
+    <string name="search">Gözleg</string>
+    <string name="library">Mediateka</string>
+    <string name="artists">Artistler</string>
+    <string name="albums">Albomlar</string>
+    <string name="profile">Profil</string>
+    <string name="songs">Aýdymlar</string>
+    <string name="media_library">Meniň üçin</string>
+    <string name="downloads">Ýüklenenler</string>
+    <string name="favorite_songs">Halanan aýdymlar</string>
+    <string name="playlists">Pleýlistler</string>
+    <string name="following_artists">Artistler</string>
+    <string name="my_library">Mediateka</string>
+    <string name="not_found">Gynansakda tapylmady...</string>
+    <string name="genres">Žanrlar</string>
+    <string name="premium">Premium</string>
+    <string name="buy">Satyn almak</string>
+    <string name="artist">Artist</string>
+    <string name="add">Goşmak</string>
+    <string name="play">Diňlemek</string>
+    <string name="subscription">Subscription</string>
+    <string name="notification">Bildirişler</string>
+    <string name="language">Dil</string>
+    <string name="select_language">Dil saýlaň</string>
+    <string name="connected_devices">Baglanan enjamlar</string>
+    <string name="privacy_policy">Gizlinlik syýasaty</string>
+    <string name="terms_of_use">Ulanyş şertleri</string>
+    <string name="contact_us">Biz bilen habarlaşyň</string>
+    <string name="cancel">Ýatyrmak</string>
+    <string name="no">Ýok</string>
+    <string name="yes">Hawa</string>
+    <string name="do_you_really_want_to_log_out">Hakykatdanam çykmak isleyarsiňizmi?</string>
+    <string name="other_devices">Başga enjamlar</string>
+    <string name="current_device">Bu enjam</string>
+    <string name="logout">Şahsy sahypamdan çykmak</string>
+    <string name="devices">Birikdirlen enjamlar</string>
+    <string name="about_song">Aýdym barada</string>
+    <string name="about_artist">Ýerine ýetiriji barada</string>
+    <string name="date">Goşulan wagty</string>
+    <string name="listeners">Jemi diňleýjiler</string>
+    <string name="followers">Agza bolanlar</string>
+    <string name="likes">Like</string>
+    <string name="refresh">Täzele</string>
+
+    <string name="unfollow">Agza</string>
+    <string name="follow">Yzarlaň</string>
+    <string name="news">Sungat habarlary</string>
+    <string name="dinle_id">Diňle ID</string>
+    <string name="share">Paýlaşmak</string>
+    <string name="info">Maglumat</string>
+    <string name="shows">Şow we podkastlar </string>
+    <string name="dinle_shazam_desc">“Diňle” ses arkaly aydym-sazyň gözlegini dowam et...</string>
+    <string name="playlist">Pleýlist</string>
+    <string name="album">Albom</string>
+    <string name="duration">Wagty</string>
+    <string name="roles">Rollar</string>
+    <string name="media">Klipler</string>
+    <string name="dinle_slogan">Diňle-de Hiňlen</string>
+    <string name="statistics">Gorkezijiler</string>
+
+
+    <string name="download_start_error">Failed to start download</string>
+    <string name="download_start_error_offline_license">Failed to obtain offline license</string>
+    <string name="download_live_unsupported">This demo app does not support downloading live content</string>
+    <string name="exo_download_description">Download</string>
+    <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="exo_download_downloading">Downloading</string>
+    <string name="exo_download_completed">Download completed</string>
+    <string name="exo_download_failed">Download failed</string>
+    <string name="exo_download_removing">Removing downloads</string>
+    <string name="exo_download_paused">Downloads paused</string>
+    <string name="exo_download_paused_for_network">Downloads waiting for network</string>
+    <string name="exo_download_paused_for_wifi">Downloads waiting for WiFi</string>
+    <string name="media_notification_channel">MediaNotification</string>
+    <string name="media_notification_channel_description">MediaNotification</string>
+    <string name="notification_content_title">Playback cannot be resumed</string>
+    <string name="notification_content_text">Press on the play button on the media notification if it is still present, otherwise please open the app to start the playback and re-connect the session to the controller</string>
+    <string name="notification_channel_name">Playback cannot be resumed</string>
+
+    <string name="song_count">%1$s Aýdym</string>
+    <string name="enjoy_every_moment_wit_dinle">Diňle bilen her pursatdan lezzet al:</string>
+    <string name="enjoy_every_moment_wit_dinle_desc">1. Türkmen we dünýä aýdymlaryny diňle!
+\n2.Islän aýdymyňyzy ýükläp alyň we halanlaryňyzy ýatda saklaň!
+\n3.«Shazam» funksiýasyny ulan!
+\n4.Iň meşhur gepleşiklere tomaşa et!
+\n5.Islän aýdymyňyzy karaoke ediň!
+\n6.Aýdymçylaryň, artistleriň, şowmenleriň ähli döredijiliginden lezzet alyň!
+\n7.Ähli artistleriň, aýdymçylaryň, şowmenleriň, sazandalaryň hem-de şahyrlaryň ömri we döredijiligi bilen tanyş boluň!
+\n8.Sungat täzeliklerinden habarly bol!
+\n9.Ähli aýdymlary sözleri bilen diňläň we HIŇLENIŇ!</string>
+    <string name="news_t">Täzelikler</string>
+    <string name="payment">Töleg tölemek</string>
+    <string name="payed">Tolenen</string>
+    <string name="theme">Tema</string>
+    <string name="addressing">Salgylanma</string>
+    <string name="call_us">Biz bilen habarlasmak</string>
+    <string name="to_next">Indika gosmak</string>
+    <string name="afisha">Bildirisler</string>
+    <string name="t_rkmen_top_10">Türkmen TOP 10</string>
+    <string name="world_top_song">Dünýä TOP</string>
+    <string name="tm_top_10">Türkmen TOP 10</string>
+    <string name="last_listened">Sonky dinlenenler</string>
+    <string name="langugaes">Türkmen</string>
+
+</resources>
