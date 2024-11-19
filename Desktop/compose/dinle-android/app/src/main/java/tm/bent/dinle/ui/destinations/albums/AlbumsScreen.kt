@@ -22,7 +22,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.NoConnectionView

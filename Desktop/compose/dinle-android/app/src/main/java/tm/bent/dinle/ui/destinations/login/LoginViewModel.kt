@@ -36,8 +36,11 @@ class LoginViewModel @Inject constructor(
             try {
                 userRepository.login("+993$phone")
                 _uiState.update { it.updateToLoaded() }
+                Log.e("TAG", "loginUser: $phone" )
+
             }catch (e:Exception){
-                Log.e("TAG", "loginUser: "+e.message )
+
+                Log.e("TAT", "loginUser: "+e.message )
                 _uiState.update { it.updateToFailure(e.message.toString()) }
             }
         }

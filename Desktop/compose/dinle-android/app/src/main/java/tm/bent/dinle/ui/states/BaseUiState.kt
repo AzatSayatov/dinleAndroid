@@ -1,10 +1,5 @@
 package tm.bent.dinle.ui.states
 
-import tm.bent.dinle.domain.model.Artist
-import tm.bent.dinle.domain.model.ArtistDetail
-import tm.bent.dinle.domain.model.Home
-import tm.bent.dinle.domain.model.PagingData
-
 
 data class BaseUIState(
     val success: Boolean = false,

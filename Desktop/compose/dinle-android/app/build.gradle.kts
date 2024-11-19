@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "tm.bent.dinle"
+    namespace = "tm.bent.dinle.hinlen"
     compileSdk = 34
 
     //key store pass bereketbendi
@@ -16,11 +16,11 @@ android {
     //key pass bereketbendi
 
     defaultConfig {
-        applicationId = "tm.bent.dinle"
+        applicationId = "tm.bent.dinle.hinlen"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
-        versionName = "0.0.3"
+        versionCode = 7
+        versionName = "1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -28,21 +28,37 @@ android {
         }
     }
 
+
+
     buildTypes {
         release {
+            isDebuggable = false
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
+
+            ndk {
+                debugSymbolLevel
+                "SYMBOL_TABLE"
+            }
         }
         debug {
+            isDebuggable = false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            ndk {
+                debugSymbolLevel
+                "SYMBOL_TABLE"
+
+                abiFilters
+            }
         }
     }
     compileOptions {
@@ -136,8 +152,8 @@ dependencies {
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.2.1")
 
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
     //Paging
     val paging = "3.3.0-alpha02"
     implementation("androidx.paging:paging-runtime-ktx:$paging")

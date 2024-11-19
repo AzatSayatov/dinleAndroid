@@ -1,31 +1,26 @@
 package tm.bent.dinle.ui.destinations.artist
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -69,21 +64,17 @@ import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_ARTIST_URL
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.ui.components.CustomIconButton
-import tm.bent.dinle.ui.components.HeaderView
+import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.MediaRowView
-import tm.bent.dinle.ui.components.MediaView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
-import tm.bent.dinle.ui.components.PlaylistRowView
-import tm.bent.dinle.ui.components.PlaylistView
 import tm.bent.dinle.ui.components.SongRowView
 import tm.bent.dinle.ui.components.bottomsheet.SongActionsBottomSheet
 import tm.bent.dinle.ui.components.toolbar.CollapsingToolbarScaffold
@@ -91,18 +82,10 @@ import tm.bent.dinle.ui.components.toolbar.ScrollStrategy
 import tm.bent.dinle.ui.components.toolbar.rememberCollapsingToolbarScaffoldState
 import tm.bent.dinle.ui.destinations.ArtistInfoScreenDestination
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
-import tm.bent.dinle.ui.destinations.MediasScreenDestination
-import tm.bent.dinle.ui.destinations.PlaylistScreenDestination
-import tm.bent.dinle.ui.destinations.PlaylistsScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
-import tm.bent.dinle.ui.destinations.SongsScreenDestination
 import tm.bent.dinle.ui.destinations.VideoPlayerScreenDestination
 import tm.bent.dinle.ui.destinations.albums.SearchAlbums
-import tm.bent.dinle.ui.destinations.artists.ArtistsPreferences
-import tm.bent.dinle.ui.destinations.medias.MediasScreen
-import tm.bent.dinle.ui.destinations.playlistdetail.PlaylistViewModel
-import tm.bent.dinle.ui.destinations.playlists.PlaylistsScreen
-import tm.bent.dinle.ui.destinations.songs.SearchSong
+import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.theme.BackgroundGray
 import tm.bent.dinle.ui.theme.Black80
@@ -124,16 +107,33 @@ fun ArtistScreen(
 
     val uiState by artistViewModel.uiState.collectAsState()
 
-    var following by rememberSaveable { mutableStateOf(false) }
-    var followingIcon = if (following) R.drawable.ic_check else R.drawable.ic_add
-    var followingStr = if (following) R.string.unfollow else R.string.follow
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songs by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
+
 
     val context = LocalContext.current
+    var following  by rememberSaveable {
+        mutableStateOf(
+            uiState.data?.artist?.following
+        )
+    }
 
+
+    LaunchedEffect(uiState.data?.artist){
+        following = uiState.data?.artist?.following
+    }
 
     LaunchedEffect(baseRequest) {
         artistViewModel.getArtistDetail(baseRequest)
     }
+
+
+
+
+    var followingIcon = if (following == true) R.drawable.ic_check else R.drawable.ic_add
+    var followingStr = if (following == true) R.string.unfollow else R.string.follow
 
 
     val moreDialogState = rememberModalBottomSheetState()
@@ -271,9 +271,9 @@ fun ArtistScreen(
                                 ),
                                 onClick = {
                                     uiState.data?.artist?.let { artist ->
-                                        following = !following
+                                        following = !following!!
                                         artistViewModel.subscribe(artist.id)
-
+                                        Log.i("ArtistId", "ArtistScreen: ${artist.id}")
                                     }
                                 }
                             ) {
@@ -523,6 +523,10 @@ fun ArtistScreen(
                                                                 playerController.init(songs.itemSnapshotList.items.indexOf(song),
                                                                     songs.itemSnapshotList.items)
                                                             },
+                                                            isDeletingVisible = {
+                                                                selectedSong = song
+                                                                setDeletingVisible(true)
+                                                            }
                                                         )
                                                     }
 
@@ -699,6 +703,20 @@ fun ArtistScreen(
 
 
 
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songs.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
+            }
+
             if (showMoreDialog && selectedSong != null) {
                 SongActionsBottomSheet(
                     song = selectedSong!!,
@@ -721,6 +739,7 @@ fun ArtistScreen(
                         showMoreDialog = false
                     },
                     onLike = {
+                             songViewModel.likeSong(selectedSong!!.id)
                     },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))

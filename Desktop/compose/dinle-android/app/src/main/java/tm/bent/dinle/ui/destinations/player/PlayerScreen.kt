@@ -4,7 +4,6 @@ import android.media.metrics.PlaybackStateEvent
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,13 +70,12 @@ import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.Player.REPEAT_MODE_ONE
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.Download
-import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
+//import tm.bent.dinle.hinlen.R
+
 import tm.bent.dinle.di.SHARE_SONG_URL
-import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlaybackState
@@ -83,8 +83,8 @@ import tm.bent.dinle.player.PlayerController
 import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.SongRowView
 import tm.bent.dinle.ui.components.bottomsheet.SongActionsBottomSheet
-import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
+import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.theme.Background
 import tm.bent.dinle.ui.theme.BackgroundSecond
 import tm.bent.dinle.ui.theme.Inactive
@@ -110,8 +110,10 @@ fun PlayerScreen(
     onDismiss: () -> Unit
 ) {
 
-    val navigator : DestinationsNavigator
+    val navigator: DestinationsNavigator
     val context = LocalContext.current
+
+    val songsViewModel = hiltViewModel<SongsViewModel>()
 
     val playerBottomSheet = rememberModalBottomSheetState(
         skipPartiallyExpanded = true,
@@ -193,26 +195,26 @@ fun PlayerScreen(
 
                     contentAlignment = Alignment.Center
                 ) {
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(0.9f)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(Color.Black.copy(alpha = 0.3f), Color.Transparent)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.9f)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.3f),
+                                        Color.Transparent
+                                    )
+                                )
                             )
-                        ))
+                    )
                     {
                         SubcomposeAsyncImage(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(BackgroundSecond)
                                 .blur(radius = 100.dp)
-                                .aspectRatio(0.9f)
-                                .clickable {
-                                    if (!song.artistId.isNullOrEmpty()) {
-                                        onNavigateToArtist(song.artistId)
-                                    }
-                                },
+                                .aspectRatio(0.9f),
                             model = playerController.selectedTrack?.getImage(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
@@ -290,9 +292,9 @@ fun PlayerScreen(
 
                 Slider(value = draggingProgress ?: currentMediaProgress,
                     onValueChange = { value ->
-                        if (value == playbackStateValue.currentTrackDuration.toFloat()-1f){
+                        if (value == playbackStateValue.currentTrackDuration.toFloat() - 1f) {
                             playerController.onNextClick()
-                        }else{
+                        } else {
                             draggingProgress = value
                         }
                     },
@@ -363,7 +365,7 @@ fun PlayerScreen(
                 ) {
 
                     IconButton(modifier = Modifier.weight(1f), onClick = {
-                        playerController.toggleShuffle(song)
+                        playerController.toggleShuffle()
                     }) {
                         Icon(
                             modifier = Modifier.size(20.dp),
@@ -374,6 +376,9 @@ fun PlayerScreen(
                     }
                     IconButton(modifier = Modifier.weight(1f), onClick = {
                         playerController.onPreviousClick()
+                        if (showLyrics) {
+                            showLyrics = false
+                        }
                     }) {
                         Icon(
                             modifier = Modifier.size(30.dp),
@@ -401,7 +406,12 @@ fun PlayerScreen(
                     }
                     IconButton(
                         modifier = Modifier.weight(1f),
-                        onClick = { playerController.onNextClick() }) {
+                        onClick = {
+                            playerController.onNextClick()
+                            if (showLyrics) {
+                                showLyrics = false
+                            }
+                        }) {
                         Icon(
                             modifier = Modifier.size(30.dp),
                             painter = painterResource(id = R.drawable.ic_skip_forward),
@@ -491,7 +501,9 @@ fun PlayerScreen(
             onDismissRequest = {
                 showMoreDialog = false
             },
-            onLike = {},
+            onLike = {
+                songsViewModel.likeSong(selectedSong!!.id)
+            },
             onNavigateToArtist = {
                 if (!selectedSong!!.artistId.isNullOrEmpty()) {
                     onNavigateToArtist(selectedSong!!.artistId)
@@ -638,7 +650,25 @@ fun CurrentPlaylistView(
     playerController: PlayerController, onMoreClick: (Song) -> Unit, onDownload: (Song) -> Unit
 ) {
 
+
+    val listState = rememberLazyListState()
+
+    // Get the index of the selected track in the playerController's track list
+    val selectedTrackIndex = playerController.tracks.indexOf(playerController.selectedTrack)
+    var selectedSong by remember { mutableStateOf<Song?>(null) }
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songs by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
+
+    // Automatically scroll to the selected track when it changes
+    LaunchedEffect(selectedTrackIndex) {
+        if (selectedTrackIndex >= 0) {
+            listState.animateScrollToItem(selectedTrackIndex)
+        }
+    }
+
     LazyColumn(
+        state = listState,
         modifier = Modifier.padding(paddingValues = padding),
         contentPadding = PaddingValues(vertical = 20.dp)
     ) {
@@ -650,7 +680,11 @@ fun CurrentPlaylistView(
                 onMoreClick = { onMoreClick(song) }, onDownload = {
                     onDownload(song)
                 }, extendable = false,
-                onClick = { playerController.onTrackClick(song) }
+                onClick = { playerController.onTrackClick(song) },
+                isDeletingVisible = {
+                    selectedSong = song
+                    setDeletingVisible(true)
+                }
             )
 
             HorizontalDivider(
@@ -659,6 +693,19 @@ fun CurrentPlaylistView(
             )
         }
 
+    }
+    if (isDeletingVisible) {
+        DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+            onConfirm = {
+                val indx = songs.indexOf(selectedSong!!)
+                Log.e("myLog", "SongRowView: $indx")
+                downloadsViewModel.removeSongAt(indx)
+                setDeletingVisible(false)
+                selectedSong!!.isPlaying() == false
+            },
+            onDismissRequest = {
+                setDeletingVisible(false)
+            })
     }
 }
 
@@ -694,7 +741,8 @@ fun PlayerCoverView(
 
 
     val isInArray = songs.any { it.id == song.id }
-    val downloadedIcon = if(isInArray) R.drawable.ic_check_circled else R.drawable.ic_download_circle
+    val downloadedIcon =
+        if (isInArray) R.drawable.ic_check_circled else R.drawable.ic_download_circle
 
     Box(modifier = modifier) {
         SubcomposeAsyncImage(
@@ -783,11 +831,11 @@ fun PlayerCoverView(
                                 .background(Color.Transparent),
                             onClick = {
                                 Log.e("TAG", "ghghghgh: " + song)
-                                if (!isInArray){
+                                if (!isInArray) {
                                     onDownload(song)
                                     downloadTracker?.download(song.toDownloadMediaItem())
-                                }else{
-//                                    setDeletingVisible(true)
+                                } else {
+                                    setDeletingVisible(true)
                                 }
 
                             },
@@ -816,20 +864,19 @@ fun PlayerCoverView(
                 }
             }
 
-//            if (isDeletingVisible) {
-//                DeletingDialog(title = "Pozmak isleyanizmi",
-//                    onConfirm = {
-//                        val indx = songs.indexOf(song)
-//                        Log.e("myLog", "SongRowView: $indx")
-//                        songViewModel.removeSongAt(indx)
-//                        song.isPlaying() == false
-//                        setDeletingVisible(false)
-//                    },
-//                    onDismissRequest = {
-//                        setDeletingVisible(false)
-//                    })
-//            }
-
+            if (isDeletingVisible) {
+                DeletingDialog(title = "Pozmak isleyanizmi",
+                    onConfirm = {
+                        val indx = songs.indexOf(song!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        songViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        song!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
+            }
 
 
             Column(
@@ -838,7 +885,8 @@ fun PlayerCoverView(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = playerController.selectedTrack?.title ?: "", style = TextStyle(
+                    text = playerController.selectedTrack?.title ?: "",
+                    style = TextStyle(
                         fontSize = 18.sp,
                         fontFamily = RobotoFlex,
                         fontWeight = FontWeight.SemiBold,
@@ -859,7 +907,8 @@ fun PlayerCoverView(
                                 onNavigateToArtist(playerController.selectedTrack?.artistId!!)
                             }
                         },
-                    text = playerController.selectedTrack?.description ?: "", style = TextStyle(
+                    text = playerController.selectedTrack?.description ?: "",
+                    style = TextStyle(
                         fontSize = 16.sp,
                         fontFamily = RobotoFlex, fontWeight = FontWeight.Medium, color = Inactive
                     ),

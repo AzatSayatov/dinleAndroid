@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Diňle</string>
+    <string name="app_name">Diňle-de Hiňlen</string>
     <string name="no_connection">Internet ýok 🤔</string>
     <string name="phone_number">Telefon belgiňiz</string>
     <string name="continue_string">Agza bol</string>
@@ -111,5 +111,6 @@
     <string name="tm_top_10">Türkmen TOP 10</string>
     <string name="last_listened">Sonky dinlenenler</string>
     <string name="langugaes">Türkmen</string>
+    <string name="pozmak_isleyanizmi">Pozmak isleyanizmi</string>
 
 </resources>

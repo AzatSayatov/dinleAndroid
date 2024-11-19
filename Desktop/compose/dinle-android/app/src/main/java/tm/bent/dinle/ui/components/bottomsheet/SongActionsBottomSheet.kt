@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +54,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlayerController
@@ -63,7 +62,6 @@ import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.GreyShimmer
 import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.theme.Button1
-import tm.bent.dinle.ui.theme.Inactive2
 import tm.bent.dinle.ui.theme.RobotoFlex
 import tm.bent.dinle.ui.theme.Subtitle
 

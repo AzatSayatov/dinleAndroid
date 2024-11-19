@@ -19,7 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.theme.RobotoFlex
 
 

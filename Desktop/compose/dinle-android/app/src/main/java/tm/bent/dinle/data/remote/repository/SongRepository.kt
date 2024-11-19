@@ -1,24 +1,20 @@
 package tm.bent.dinle.data.remote.repository
 
-import androidx.media3.common.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import retrofit2.Response
 import tm.bent.dinle.data.remote.paging.SongsPagingSource
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.dao.SongDao
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
-import tm.bent.dinle.domain.model.PagingResponse
 import tm.bent.dinle.domain.model.Playlist
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.domain.model.SongInfo
 import java.io.File
-import java.util.Date
 import javax.inject.Inject
 
 
@@ -127,6 +123,6 @@ class SongRepository @Inject constructor(
     }
 
     companion object {
-        const val DEFAULT_PAGE_SIZE = 100
+        const val DEFAULT_PAGE_SIZE = 1000
     }
 }

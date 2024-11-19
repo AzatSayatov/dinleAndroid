@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +26,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,18 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.findNavController
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.MainViewModel
-import tm.bent.dinle.R
-import tm.bent.dinle.ui.DeviceView
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.components.LibraryItemView
-import tm.bent.dinle.ui.components.SwitchListItemView
 import tm.bent.dinle.ui.components.dialog.ConfirmationDialog
 import tm.bent.dinle.ui.components.dialog.LanguageSelectionView
 import tm.bent.dinle.ui.destinations.DevicesScreenDestination
-import tm.bent.dinle.ui.destinations.LoginScreenDestination
 import tm.bent.dinle.ui.destinations.PrivacyScreenDestination
 import tm.bent.dinle.ui.theme.Container
 import tm.bent.dinle.ui.theme.Inactive2
@@ -72,7 +65,6 @@ import tm.bent.dinle.ui.util.LocaleHelper
 import tm.bent.dinle.ui.util.clickWithoutIndication
 import tm.bent.dinle.ui.util.findActivity
 import tm.bent.dinle.ui.util.restartActivity
-import java.util.Locale
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -345,7 +337,7 @@ fun ProfileScreen(
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = "Dinle v1.0.0",
+                text = "Dinle v1.6",
                 style = TextStyle(
                     fontSize = 12.sp,
                     lineHeight = 16.sp,
@@ -396,9 +388,11 @@ fun ProfileScreen(
                 title = stringResource(R.string.do_you_really_want_to_log_out),
                 sheetState = logoutConfirmationDialog,
                 onConfirm = {
-                    showLogoutConfirmation = false
-                    profileViewModel.logout(context)
                     profileViewModel.clearUserData()
+                    profileViewModel.logout(context)
+                    showLogoutConfirmation = false
+
+//                    navigator.navigate(LoginScreenDestination)
 
                 },
                 onDismissRequest = { showLogoutConfirmation = false }

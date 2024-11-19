@@ -24,13 +24,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.Media
 import tm.bent.dinle.domain.model.mockMedia
 import tm.bent.dinle.ui.DinleImage
 import tm.bent.dinle.ui.theme.RobotoFlex
 import tm.bent.dinle.ui.util.formatDuration
-import tm.bent.dinle.ui.util.formatTime
 
 
 @Composable

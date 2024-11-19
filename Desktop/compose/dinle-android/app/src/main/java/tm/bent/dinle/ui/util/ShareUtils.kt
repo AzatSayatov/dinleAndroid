@@ -1,11 +1,7 @@
 package tm.bent.dinle.ui.util
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.widget.Toast
-import tm.bent.dinle.R
 
 object ShareUtils {
 

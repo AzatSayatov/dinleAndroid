@@ -52,7 +52,6 @@ import tm.bent.dinle.ui.startAppDestination
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     val mainViewModel: MainViewModel by viewModels()
 
 

@@ -7,7 +7,6 @@ import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
 import tm.bent.dinle.domain.model.News
-import tm.bent.dinle.domain.model.SearchResponse
 import javax.inject.Inject
 
 

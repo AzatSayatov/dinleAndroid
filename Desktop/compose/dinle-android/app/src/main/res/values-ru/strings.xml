@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Diňle</string>
+    <string name="app_name">Diňle-de Hiňlen</string>
     <string name="no_connection">Нет интернета 🤔</string>
     <string name="phone_number">Ваш номер телефона</string>
     <string name="continue_string">Войти</string>
@@ -52,6 +52,7 @@
     <string name="followers">Подписчики</string>
     <string name="likes">Лайк</string>
     <string name="refresh">Обновить</string>
+    <string name="song_count">%1$s Песня</string>
 
     <string name="unfollow">Подписан</string>
     <string name="follow">Подписаться</string>
@@ -82,4 +83,5 @@
     <string name="tm_top_10">Türkmen TOP 10</string>
     <string name="last_listened">Недавнo прослушaнныe</string>
     <string name="langugaes">Русский</string>
+    <string name="pozmak_isleyanizmi">Pozmak isleyanizmi</string>
 </resources>

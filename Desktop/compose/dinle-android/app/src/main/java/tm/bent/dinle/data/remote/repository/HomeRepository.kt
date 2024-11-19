@@ -8,7 +8,6 @@ import tm.bent.dinle.domain.dao.SongDao
 import tm.bent.dinle.domain.model.Banner
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
-import tm.bent.dinle.domain.model.Genre
 import tm.bent.dinle.domain.model.Home
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.domain.model.User

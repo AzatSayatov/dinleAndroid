@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.ramcosta.composedestinations.annotation.NavGraph
 import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.destinations.HomeScreenDestination
 import tm.bent.dinle.ui.destinations.LibraryScreenDestination
 import tm.bent.dinle.ui.destinations.SearchScreenDestination

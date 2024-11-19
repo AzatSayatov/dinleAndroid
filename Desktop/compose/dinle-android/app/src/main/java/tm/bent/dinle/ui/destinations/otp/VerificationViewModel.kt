@@ -2,33 +2,23 @@ package tm.bent.dinle.ui.destinations.otp
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.os.SystemClock
 import android.util.Log
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import tm.bent.dinle.BuildConfig
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants.NOTIFICATIONS_KEY
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants.PHONE_KEY
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants.ACCESS_TOKEN_KEY
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants.USER_ID_KEY
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreHelper
 import tm.bent.dinle.data.remote.repository.UserRepository
-import tm.bent.dinle.domain.model.BaseResponse
 import tm.bent.dinle.domain.model.Device
 import tm.bent.dinle.domain.model.User
 import tm.bent.dinle.ui.states.BaseUIState
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import javax.inject.Inject
 
 

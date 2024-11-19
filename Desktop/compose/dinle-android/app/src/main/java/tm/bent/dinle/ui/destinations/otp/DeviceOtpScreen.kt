@@ -47,7 +47,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.SimpleTopAppBar
 import tm.bent.dinle.ui.theme.Inactive

@@ -1,11 +1,5 @@
 package tm.bent.dinle
 
-import android.content.Context
-import android.content.SharedPreferences
-import android.preference.PreferenceManager
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-
 
 //@Singleton
 //class LocaleController @Inject constructor(

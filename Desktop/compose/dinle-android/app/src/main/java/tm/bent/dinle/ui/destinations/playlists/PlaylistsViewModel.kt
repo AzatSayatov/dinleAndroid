@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import tm.bent.dinle.data.remote.repository.ArtistRepository
 import tm.bent.dinle.data.remote.repository.PlaylistRepository
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.News

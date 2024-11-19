@@ -1,8 +1,6 @@
 package tm.bent.dinle.data.remote.service
 
 import okhttp3.MultipartBody
-import okhttp3.Response
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
@@ -18,12 +16,9 @@ import tm.bent.dinle.domain.model.Auth
 import tm.bent.dinle.domain.model.Banner
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
-import tm.bent.dinle.domain.model.Device
 import tm.bent.dinle.domain.model.DeviceResponse
-import tm.bent.dinle.domain.model.FetchSong
 import tm.bent.dinle.domain.model.Genre
 import tm.bent.dinle.domain.model.Home
-import tm.bent.dinle.domain.model.ListenSong
 import tm.bent.dinle.domain.model.Media
 import tm.bent.dinle.domain.model.Message
 import tm.bent.dinle.domain.model.News
@@ -31,11 +26,9 @@ import tm.bent.dinle.domain.model.PagingResponse
 import tm.bent.dinle.domain.model.Playlist
 import tm.bent.dinle.domain.model.SearchResponse
 import tm.bent.dinle.domain.model.Song
-import tm.bent.dinle.domain.model.SongIn
 import tm.bent.dinle.domain.model.SongInfo
 import tm.bent.dinle.domain.model.SongRequest
 import tm.bent.dinle.domain.model.SongResponce
-import tm.bent.dinle.domain.model.StatusSong
 import tm.bent.dinle.domain.model.TagList
 import tm.bent.dinle.domain.model.Token
 import tm.bent.dinle.domain.model.User

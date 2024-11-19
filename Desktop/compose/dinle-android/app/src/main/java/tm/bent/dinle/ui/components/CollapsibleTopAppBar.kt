@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.max
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import kotlin.math.absoluteValue
 import kotlin.math.min
 

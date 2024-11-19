@@ -8,7 +8,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapLatest
 import tm.bent.dinle.data.remote.repository.NewsRepository
-import tm.bent.dinle.data.remote.repository.ShowRepository
 import tm.bent.dinle.domain.model.BaseRequest
 import javax.inject.Inject
 

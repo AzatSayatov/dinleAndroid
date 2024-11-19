@@ -1,5 +1,6 @@
 package tm.bent.dinle.ui.destinations.songs
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,11 +26,11 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
+import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
@@ -41,6 +42,7 @@ import tm.bent.dinle.ui.components.pullrefresh.pullRefresh
 import tm.bent.dinle.ui.components.pullrefresh.rememberPullRefreshState
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
+import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.destinations.searchresults.SearchViewModel
 import tm.bent.dinle.ui.util.ShareUtils
 
@@ -65,6 +67,10 @@ fun SongsScreen(
 
     val playerController =  songViewModel.getPlayerController()
     val downloadTracker = songViewModel.getDownloadTracker()
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songsD by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
 
     val songs = songViewModel.songs.collectAsLazyPagingItems()
 
@@ -130,6 +136,8 @@ fun SongsScreen(
                             isLikeable = baseRequest.isLiked == true,
                             onLike = {
                                 songViewModel.likeSong(song.id)
+                                songs.refresh()
+                                songs.retry()
                             },
                             onDownload = {
                                 songViewModel.insertSong(song)
@@ -143,6 +151,10 @@ fun SongsScreen(
 //                                )
                                 playerController.init(songs.itemSnapshotList.items.indexOf(song),songs.itemSnapshotList.items)
                             },
+                            isDeletingVisible = {
+                                selectedSong = song
+                                setDeletingVisible(true)
+                            }
                         )
                     }
 
@@ -152,6 +164,20 @@ fun SongsScreen(
                 refreshing = songs.itemCount != 0 && songs.loadState.refresh == LoadState.Loading,
                 pullRefreshState,
             )
+
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songsD.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
+            }
 
             if (showMoreDialog && selectedSong != null) {
                 SongActionsBottomSheet(
@@ -174,7 +200,11 @@ fun SongsScreen(
                     onDismissRequest = {
                         showMoreDialog = false
                     },
-                    onLike = {},
+                    onLike = {
+                        songViewModel.likeSong(selectedSong!!.id)
+                        songs.refresh()
+                        songs.retry()
+                    },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))
 
@@ -212,6 +242,10 @@ fun SearchSong(
 
     val playerController =  songViewModel.getPlayerController()
     val downloadTracker = songViewModel.getDownloadTracker()
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songsD by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
 
     val songs = songViewModel.songs.collectAsLazyPagingItems()
 
@@ -286,6 +320,10 @@ fun SearchSong(
                                 playerController.init(songs.itemSnapshotList.items.indexOf(song),songs.itemSnapshotList.items)
 
                             },
+                            isDeletingVisible = {
+                                selectedSong = song
+                                setDeletingVisible(true)
+                            }
                         )
                     }
 
@@ -295,6 +333,20 @@ fun SearchSong(
                 refreshing = songs.itemCount != 0 && songs.loadState.refresh == LoadState.Loading,
                 pullRefreshState,
             )
+
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songsD.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
+            }
 
             if (showMoreDialog && selectedSong != null) {
                 SongActionsBottomSheet(

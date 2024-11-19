@@ -1,17 +1,13 @@
 package tm.bent.dinle.data.remote.repository
 
-import tm.bent.dinle.data.local.datastore.PreferenceDataStoreHelper
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.dao.SongDao
-import tm.bent.dinle.domain.model.Auth
 import tm.bent.dinle.domain.model.Banner
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
 import tm.bent.dinle.domain.model.Genre
-import tm.bent.dinle.domain.model.Message
 import tm.bent.dinle.domain.model.SearchResponse
 import tm.bent.dinle.domain.model.Song
-import tm.bent.dinle.domain.model.User
 import javax.inject.Inject
 
 

@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -37,55 +32,40 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
-import tm.bent.dinle.domain.model.mockMedia
-import tm.bent.dinle.ui.components.ArtistRowView
-import tm.bent.dinle.ui.components.HeaderView
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.MediaRowView
-import tm.bent.dinle.ui.components.MediaView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
-import tm.bent.dinle.ui.components.PlaylistView
-import tm.bent.dinle.ui.components.SongRowView
 import tm.bent.dinle.ui.components.bottomsheet.SongActionsBottomSheet
 import tm.bent.dinle.ui.components.pullrefresh.PullRefreshIndicator
 import tm.bent.dinle.ui.components.pullrefresh.pullRefresh
 import tm.bent.dinle.ui.components.pullrefresh.rememberPullRefreshState
 import tm.bent.dinle.ui.components.search.SearchBar
-import tm.bent.dinle.ui.destinations.AlbumsScreenDestination
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
-import tm.bent.dinle.ui.destinations.ArtistsScreenDestination
-import tm.bent.dinle.ui.destinations.MediasScreenDestination
-import tm.bent.dinle.ui.destinations.PlaylistScreenDestination
-import tm.bent.dinle.ui.destinations.PlaylistsScreenDestination
+import tm.bent.dinle.ui.destinations.SearchResultsScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
-import tm.bent.dinle.ui.destinations.SongsScreenDestination
 import tm.bent.dinle.ui.destinations.VideoPlayerScreenDestination
 import tm.bent.dinle.ui.destinations.albums.SearchAlbums
 import tm.bent.dinle.ui.destinations.artists.SearchArtists
+import tm.bent.dinle.ui.destinations.genre.GenreViewModel
 import tm.bent.dinle.ui.destinations.medias.MediaViewModel
-import tm.bent.dinle.ui.destinations.medias.SearchMedia
-import tm.bent.dinle.ui.destinations.playlistdetail.PlaylistViewModel
 import tm.bent.dinle.ui.destinations.playlists.SearchPlaylists
 import tm.bent.dinle.ui.destinations.songs.SearchSong
-import tm.bent.dinle.ui.destinations.songs.SongsScreen
 import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.util.ShareUtils
 import tm.bent.dinle.ui.util.clickWithoutIndication
@@ -97,11 +77,18 @@ fun SearchResultsScreen(
     search: String,
     navigator: DestinationsNavigator
 ) {
-    val searchBarString = search
+    val searchBarString by rememberSaveable {
+        mutableStateOf(search)
+    }
 
     val searchViewModel = hiltViewModel<SearchViewModel>()
-    val songViewModel = hiltViewModel<SongsViewModel>()
+    val songsViewModel = hiltViewModel<SongsViewModel>()
     val mediaViewModel = hiltViewModel<MediaViewModel>()
+    val genreViewModel = hiltViewModel<GenreViewModel>()
+
+
+    val focusRequester = remember { FocusRequester() }
+    var focused by remember { mutableStateOf(false) }
 
 
     val uiState by searchViewModel.uiState.collectAsState()
@@ -110,11 +97,11 @@ fun SearchResultsScreen(
 
     val context = LocalContext.current
 
-    val baseRequest by searchViewModel.baseRequest.collectAsState(BaseRequest(search = search))
+    val baseRequest by searchViewModel.baseRequest.collectAsState(BaseRequest(search = searchBarString))
 
-    LaunchedEffect(search) {
-        if (baseRequest.search.isNullOrEmpty()) {
-            searchViewModel.setBaseRequest(BaseRequest(search = search))
+    LaunchedEffect(searchBarString) {
+        if (searchBarString.isNullOrEmpty()) {
+            searchViewModel.setBaseRequest(BaseRequest(search = searchBarString))
 
         }
     }
@@ -151,7 +138,8 @@ fun SearchResultsScreen(
                     .padding(start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { searchBarString == "" }) {
+                IconButton(onClick = { searchBarString == ""
+                searchViewModel.setBaseRequest(BaseRequest(search = ""))}) {
                     Icon(
                         modifier = Modifier.clickWithoutIndication {
                             navigator.navigateUp()
@@ -166,9 +154,13 @@ fun SearchResultsScreen(
 
 
                 SearchBar(
-                    search = searchBarString,
-                ) { searchStr ->
-                    searchViewModel.setBaseRequest(BaseRequest(search = searchStr))
+                    focusRequester = focusRequester,
+                    onFocusChanged = { focus ->
+                        focused = focus
+                    },
+                ){ search ->
+                    genreViewModel.saveSearchStr(search.trim())
+                    navigator.navigate(SearchResultsScreenDestination(search = search.trim()))
                 }
             }
 
@@ -182,11 +174,11 @@ fun SearchResultsScreen(
             contentAlignment = Alignment.TopCenter
         ) {
             if (uiState.isLoading) {
-                searchViewModel.setBaseRequest(BaseRequest(search = search))
+                searchViewModel.setBaseRequest(BaseRequest(search = searchBarString))
                 LoadingView(Modifier.fillMaxSize())
             } else if (uiState.isFailure) {
                 NoConnectionView(Modifier.fillMaxSize()) {
-                    searchViewModel.setBaseRequest(BaseRequest(search = search))
+                    searchViewModel.setBaseRequest(BaseRequest(search = searchBarString))
                 }
             } else if (uiState.data?.isEmpty() == true) {
                 NotFoundView(Modifier.fillMaxSize())
@@ -220,27 +212,27 @@ fun SearchResultsScreen(
                         }
                         when (selectedTab) {
                             0 -> {
-                                SearchSong(baseRequest = BaseRequest(search = search), navigator = navigator)
+                                SearchSong(baseRequest = BaseRequest(search = searchBarString), navigator = navigator)
                             }
 
                             1 -> {
                                 SearchArtists(
                                     navigator = navigator,
-                                    baseRequest = BaseRequest(search = search)
+                                    baseRequest = BaseRequest(search = searchBarString)
                                 )
                             }
 
                             2 -> {
                                 SearchAlbums(
                                     navigator = navigator,
-                                    baseRequest = BaseRequest(search = search)
+                                    baseRequest = BaseRequest(search = searchBarString)
                                 )
                             }
 
                             3 -> {
                                 SearchPlaylists(
                                     navigator = navigator,
-                                    baseRequest = BaseRequest(search = search)
+                                    baseRequest = BaseRequest(search = searchBarString)
                                 )
                             }
 
@@ -324,7 +316,9 @@ fun SearchResultsScreen(
                     onDismissRequest = {
                         showMoreDialog = false
                     },
-                    onLike = {},
+                    onLike = {
+                        songsViewModel.likeSong(selectedSong!!.id)
+                    },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))
 

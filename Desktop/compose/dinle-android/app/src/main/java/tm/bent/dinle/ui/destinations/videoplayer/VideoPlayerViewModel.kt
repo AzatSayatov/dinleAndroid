@@ -9,13 +9,9 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.map
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreHelper
-import tm.bent.dinle.data.remote.repository.SongRepository
 import tm.bent.dinle.di.AudioPlayer
 import tm.bent.dinle.di.VideoPlayer
-import tm.bent.dinle.player.MyPlayer
-import tm.bent.dinle.player.PlayerController
 import javax.inject.Inject
 
 @HiltViewModel

@@ -1,5 +1,7 @@
 package tm.bent.dinle.player
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.runtime.getValue
@@ -8,12 +10,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.Player
 import androidx.media3.common.Player.REPEAT_MODE_ALL
 import androidx.media3.common.Player.REPEAT_MODE_OFF
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.paging.compose.LazyPagingItems
+import dagger.hilt.android.internal.Contexts.getApplication
 
 import tm.bent.dinle.ui.util.collectPlayerState
 import tm.bent.dinle.ui.util.launchPlaybackStateJob
@@ -25,7 +26,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import tm.bent.dinle.di.AudioPlayer
 import tm.bent.dinle.domain.model.Song
 import javax.inject.Inject
 import kotlin.random.Random
@@ -37,15 +37,13 @@ class PlayerController @Inject constructor(
     private val myPlayer: MyPlayer,
 ) : ViewModel(), PlayerEvents {
 
+
     private val _tracks = mutableStateListOf<Song>()
-    private val _tracksShuffled = mutableStateListOf<Song>()
     private val tracksForShuffle = mutableStateListOf<Song>()
     val originalTracks = mutableStateListOf<Song>()
 
 
-
     val tracks: List<Song> get() = _tracks
-    val tracksShuffle: List<Song> get() = _tracksShuffled
 
     private var isTrackPlay: Boolean = false
     var selectedTrack: Song? by mutableStateOf(null)
@@ -67,14 +65,12 @@ class PlayerController @Inject constructor(
     private var _repeatMode = MutableStateFlow(REPEAT_MODE_OFF)
     val repeatMode: StateFlow<Int> = _repeatMode
 
-
     fun init(track: Song, songs: List<Song>) {
         myPlayer.iniPlayer(songs.toMediaItemList())
         observePlayerState()
 
         if (!_tracks.isEmpty()) {
             _tracks.removeRange(0, tracks.size)
-            tracksForShuffle.removeRange(0, tracks.size)
         }
         _tracks.addAll(songs)
         tracksForShuffle.addAll(songs)
@@ -88,26 +84,13 @@ class PlayerController @Inject constructor(
     fun init(track: Int, songs: List<Song>) {
         if (!_tracks.isEmpty()) {
             _tracks.removeRange(0, tracks.size)
-            _tracksShuffled.removeRange(0, tracks.size)
         }
         _tracks.addAll(songs)
-        _tracksShuffled.addAll(songs)
         myPlayer.iniPlayer(songs.toMediaItemList())
         observePlayerState()
         onTrackClick(song = track)
         setUpTrack()
-    }
 
-    fun initShuffle(track: Int, songs: List<Song>){
-        if (!_tracksShuffled.isEmpty()) {
-            _tracksShuffled.removeRange(0, tracks.size)
-        }
-        _tracksShuffled.addAll(songs)
-        _tracksShuffled.shuffle()
-        myPlayer.iniPlayer(_tracksShuffled.toMediaItemList())
-        observePlayerState()
-        onTrackClick(song = track)
-        setUpTrack()
     }
 
     fun addSongAfterCurrent(song: Song) {
@@ -115,13 +98,11 @@ class PlayerController @Inject constructor(
             if (index < _tracks.size - 1) {
                 val newIndex = index + 1
                 _tracks.add(newIndex, song)
-                tracksForShuffle.add(newIndex, song)
                 myPlayer.addMediaItem(newIndex, song.toMediaItem())
             } else {
                 // Add to the end of the list if the current index is the last one
                 _tracks.add(song)
-                tracksForShuffle.add(song)
-                myPlayer.addMediaItem(0,song.toMediaItem())
+                myPlayer.addMediaItem(0, song.toMediaItem())
             }
         }
     }
@@ -133,9 +114,10 @@ class PlayerController @Inject constructor(
         getPlayer().play()
     }
 
-    fun isPlaying(): Boolean{
+    fun isPlaying(): Boolean {
         return getPlayer().isPlaying
     }
+
     fun pauseSong() {
         return getPlayer().pause()
     }
@@ -171,14 +153,6 @@ class PlayerController @Inject constructor(
         return _repeatMode.value
     }
 
-    fun playerCurrentTime(): Long {
-        return myPlayer.currentPlaybackPosition
-    }
-
-    fun playerTrackDuration(): Long {
-        return myPlayer.currentTrackDuration
-    }
-
     fun getPlayer(): ExoPlayer {
         return myPlayer.getPlayer()
     }
@@ -189,7 +163,7 @@ class PlayerController @Inject constructor(
      * @param index The index of the selected track in the track list.
      */
     private fun onTrackSelected(index: Int) {
-        Log.e("TAG", "onTrackSelected: "+index)
+        Log.e("TAG", "onTrackSelected: " + index)
         if (selectedTrackIndex == -1) isTrackPlay = true
         if (selectedTrackIndex == -1 || selectedTrackIndex != index) {
             _tracks.resetTracks()
@@ -220,9 +194,7 @@ class PlayerController @Inject constructor(
         if (selectedTrackIndex in _tracks.indices) {
             isTrackPlay = state == PlayerStates.STATE_PLAYING
             _tracks[selectedTrackIndex].state = state
-            tracksForShuffle[selectedTrackIndex].state = state
             _tracks[selectedTrackIndex].isSelected = true
-            tracksForShuffle[selectedTrackIndex].isSelected = true
             selectedTrack = null
             selectedTrack = tracks[selectedTrackIndex]
 
@@ -230,18 +202,27 @@ class PlayerController @Inject constructor(
                 Log.e("TAG", "updateState: StartNExt $selectedTrackIndex")
 
 
-                if (_shuffleEnabled.value){
+                if (_shuffleEnabled.value) {
+                    val randomIndex = Random.nextInt(1, tracks.size)
+                    onTrackSelected(randomIndex)
 
-                }else{
+                    observePlayerState()
+
+                } else {
                     if (selectedTrackIndex < tracks.size - 1) {
                         Log.e("TAG", "onNextClick: ")
                         onTrackSelected(selectedTrackIndex + 1)
 
                         observePlayerState()
+                    } else {
+
+                        if (tracks.isNotEmpty() && myPlayer.getRepeatMode() == REPEAT_MODE_ALL) {
+                            onTrackSelected(0)
+                        }
                     }
                 }
 
-                Log.e("ShuffleModeStateNext", "setShuffleMode: enabled", )
+                Log.e("ShuffleModeStateNext", "setShuffleMode: enabled")
 
 
                 myPlayer.emitPlaying()
@@ -260,25 +241,21 @@ class PlayerController @Inject constructor(
     }
 
 
-
     fun setShuffleMode() {
-        Log.e("ShuffleMode", "setShuffleMode: enabled", )
+        Log.e("ShuffleMode", "setShuffleMode: enabled")
 
-            if (_shuffleEnabled.value) {
-                myPlayer.iniPlayer(_tracks.shuffled().toMediaItemList())
-                setUpTrack()
-            } else {
-                myPlayer.iniPlayer(_tracks.toMediaItemList())
-                setUpTrack()
-            }
+        if (_shuffleEnabled.value) {
+            myPlayer.iniPlayer(_tracks.shuffled().toMediaItemList())
+            setUpTrack()
+        } else {
+            myPlayer.iniPlayer(_tracks.toMediaItemList())
+            setUpTrack()
+        }
 
     }
 
-    fun toggleShuffle(song: Song) {
+    fun toggleShuffle() {
         _shuffleEnabled.value = !_shuffleEnabled.value
-        _tracksShuffled.shuffle()
-        selectedTrack = song
-        selectedTrackIndex = _tracks.indexOf(selectedTrack)
     }
 
     private fun observePlayerState() {
@@ -304,14 +281,12 @@ class PlayerController @Inject constructor(
      * Changes to the next track in the list if one exists.
      */
     override fun onNextClick() {
-        if (_shuffleEnabled.value){
-            if (selectedTrackIndex == -1) isTrackPlay = true
-            if (selectedTrackIndex == -1 ) {
-                _tracksShuffled.resetTracks()
-                selectedTrack = tracksShuffle[selectedTrackIndex]
-                setUpTrack()
-            }
-        }else{
+        if (_shuffleEnabled.value) {
+            val randomIndex = Random.nextInt(1, tracks.size)
+            onTrackSelected(randomIndex)
+
+            observePlayerState()
+        } else {
             if (selectedTrackIndex < tracks.size - 1) {
                 Log.e("TAG", "onNextClick: ")
                 onTrackSelected(selectedTrackIndex + 1)
@@ -333,7 +308,7 @@ class PlayerController @Inject constructor(
     }
 
     override fun onTrackClick(song: Song) {
-        Log.e("TAG", "onTrackClick: "+tracks.indexOf(song))
+        Log.e("TAG", "onTrackClick: " + tracks.indexOf(song))
         onTrackSelected(tracks.indexOf(song))
     }
 

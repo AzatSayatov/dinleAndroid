@@ -28,7 +28,6 @@ import androidx.media3.session.MediaSession.ControllerInfo
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import tm.bent.dinle.MainActivity
-import tm.bent.dinle.R
 import tm.bent.dinle.di.AudioPlayer
 
 
@@ -153,10 +152,10 @@ class PlaybackService : MediaLibraryService() {
             val builder =
                 NotificationCompat.Builder(this@PlaybackService, CHANNEL_ID)
                     .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.drawable.ic_play)
-                    .setContentTitle(getString(R.string.notification_content_title))
+                    .setSmallIcon(R.drawable.media3_icon_circular_play)
+                    .setContentTitle(getString(R.string.default_notification_channel_name))
                     .setStyle(
-                        NotificationCompat.BigTextStyle().bigText(getString(R.string.notification_content_text))
+                        NotificationCompat.BigTextStyle().bigText(getString(R.string.media3_controls_play_description))
                     )
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true)
@@ -172,7 +171,7 @@ class PlaybackService : MediaLibraryService() {
         val channel =
             NotificationChannel(
                 CHANNEL_ID,
-                getString(R.string.notification_channel_name),
+                getString(R.string.default_notification_channel_name),
                 NotificationManager.IMPORTANCE_DEFAULT
             )
         notificationManagerCompat.createNotificationChannel(channel)

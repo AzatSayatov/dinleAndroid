@@ -19,10 +19,9 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.ui.components.LoadingView
-import tm.bent.dinle.ui.components.MediaRowView
 import tm.bent.dinle.ui.components.NewsRowView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
@@ -31,7 +30,6 @@ import tm.bent.dinle.ui.components.pullrefresh.PullRefreshIndicator
 import tm.bent.dinle.ui.components.pullrefresh.pullRefresh
 import tm.bent.dinle.ui.components.pullrefresh.rememberPullRefreshState
 import tm.bent.dinle.ui.destinations.NewsDetailScreenDestination
-import tm.bent.dinle.ui.destinations.shows.ShowsViewModel
 
 
 @Destination

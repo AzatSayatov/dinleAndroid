@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,7 +19,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.MediaRowView
@@ -31,7 +30,6 @@ import tm.bent.dinle.ui.components.pullrefresh.PullRefreshIndicator
 import tm.bent.dinle.ui.components.pullrefresh.pullRefresh
 import tm.bent.dinle.ui.components.pullrefresh.rememberPullRefreshState
 import tm.bent.dinle.ui.destinations.MediasScreenDestination
-import tm.bent.dinle.ui.theme.Divider
 
 @Destination
 @Composable

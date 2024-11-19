@@ -1,14 +1,13 @@
     package tm.bent.dinle.player
 
 
+    import android.content.Context
+    import android.media.AudioManager
     import android.util.Log
-    import androidx.annotation.OptIn
     import androidx.media3.common.MediaItem
     import androidx.media3.common.PlaybackException
     import androidx.media3.common.Player
-    import androidx.media3.common.util.UnstableApi
     import androidx.media3.exoplayer.ExoPlayer
-    import androidx.media3.exoplayer.source.ShuffleOrder.DefaultShuffleOrder
     import tm.bent.dinle.player.PlayerStates.STATE_BUFFERING
     import tm.bent.dinle.player.PlayerStates.STATE_END
     import tm.bent.dinle.player.PlayerStates.STATE_ERROR
@@ -18,6 +17,7 @@
     import tm.bent.dinle.player.PlayerStates.STATE_PLAYING
     import tm.bent.dinle.player.PlayerStates.STATE_READY
     import kotlinx.coroutines.flow.MutableStateFlow
+    import tm.bent.dinle.DinleApplication
     import tm.bent.dinle.di.AudioPlayer
     import javax.inject.Inject
 
@@ -48,12 +48,63 @@
         val currentTrackDuration: Long
             get() = if (player.duration > 0) player.duration else 0L
 
+
+
+
+        private val audioManager = DinleApplication.getAppContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        private val audioFocusChangeListener = AudioManager.OnAudioFocusChangeListener { focusChange ->
+            when (focusChange) {
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+                    if (player.isPlaying) {
+                        player.pause()
+                    }
+                }
+                AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                    if (player.isPlaying) {
+                        player.pause()
+                    }
+                }
+                AudioManager.AUDIOFOCUS_GAIN -> {
+                    if (!player.isPlaying) {
+                        player.play()
+                    }
+                }
+                AudioManager.AUDIOFOCUS_LOSS -> {
+                    if (player.isPlaying) {
+                        player.stop()
+                    }
+                }
+            }
+        }
+
+        // Запрос фокуса аудио
+        fun requestAudioFocus() {
+            val result = audioManager.requestAudioFocus(
+                audioFocusChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN // Этот флаг позволяет приглушить другие приложения
+            )
+
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                player.play()
+            }else{
+                player.pause()
+            }
+        }
+
+        // Освобождение фокуса
+        fun abandonAudioFocus() {
+            audioManager.abandonAudioFocus(audioFocusChangeListener)
+        }
+
         /**
          * Initializes the player with a list of media items.
          *
          * @param trackList The list of media items to play.
          */
         fun iniPlayer(trackList: MutableList<MediaItem>) {
+            requestAudioFocus()
             player.addListener(this)
             player.setMediaItems(trackList)
             player.prepare()
@@ -121,15 +172,38 @@
          * Toggles the playback state between playing and paused.
          */
         fun playPause() {
-            if (player.playbackState == Player.STATE_IDLE) player.prepare()
-            if (player.isPlaying) player.pause() else player.play()
-    //        player.playWhenReady = !player.playWhenReady
+            // Сначала запрашиваем аудиофокус
+
+            val result = audioManager.requestAudioFocus(
+                audioFocusChangeListener,
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN // Этот флаг позволяет приглушить другие приложения
+            )
+            // Если фокус получен, проверяем состояние плеера
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                when {
+                    // Если плеер в состоянии idle (не подготовлен), подготавливаем его
+                    player.playbackState == Player.STATE_IDLE -> player.prepare()
+
+                    // Если плеер уже воспроизводит, ставим на паузу
+                    player.isPlaying -> player.pause()
+
+                    // Если плеер на паузе или остановлен, начинаем воспроизведение
+                    else -> player.play()
+                }
+            } else {
+                // Если фокус не получен, то ставим плеер на паузу
+                player.pause()
+            }
         }
+
+
 
         /**
          * Releases the player, freeing any resources it holds.
          */
         fun releasePlayer() {
+            abandonAudioFocus()
             player.release()
         }
 

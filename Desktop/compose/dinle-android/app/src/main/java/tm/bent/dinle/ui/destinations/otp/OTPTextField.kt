@@ -15,12 +15,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import tm.bent.dinle.ui.theme.Border
-import tm.bent.dinle.ui.theme.Orange2_33
-import tm.bent.dinle.ui.theme.Primary1
 import tm.bent.dinle.ui.theme.Primary2
-import tm.bent.dinle.ui.theme.Red
-import tm.bent.dinle.ui.theme.Red33
-import java.lang.Error
 
 
 @Composable

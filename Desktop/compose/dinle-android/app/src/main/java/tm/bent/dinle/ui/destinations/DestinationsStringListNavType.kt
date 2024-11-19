@@ -1,7 +1,6 @@
 package tm.bent.dinle.ui.destinations
 
 import android.os.Bundle
-import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavType
 
 object DestinationsStringListNavType : NavType<List<String>>(false) {

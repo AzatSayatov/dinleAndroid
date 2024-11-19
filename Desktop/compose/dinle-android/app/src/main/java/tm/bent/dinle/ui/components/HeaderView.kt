@@ -1,6 +1,5 @@
 package tm.bent.dinle.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,8 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.ui.destinations.ProfileScreenDestination
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.theme.RobotoFlex
 import tm.bent.dinle.ui.util.clickWithoutIndication
 

@@ -23,18 +23,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.DownloadSongRowView
 import tm.bent.dinle.ui.components.SimpleTopAppBar
-import tm.bent.dinle.ui.components.SongRowView
 import tm.bent.dinle.ui.components.bottomsheet.SongActionsBottomSheet
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
+import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.util.ShareUtils
 
 
@@ -47,6 +46,7 @@ fun DownloadsScreen(
 
 
     val songViewModel = hiltViewModel<DownloadsViewModel>()
+    val songsViewModel = hiltViewModel<SongsViewModel>()
 
     val context = LocalContext.current
 
@@ -139,7 +139,9 @@ fun DownloadsScreen(
                     onDismissRequest = {
                         showMoreDialog = false
                     },
-                    onLike = {},
+                    onLike = {
+                        songsViewModel.likeSong(selectedSong!!.id)
+                    },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))
 
@@ -147,7 +149,7 @@ fun DownloadsScreen(
                     )
             }
             if (isDeletingVisible) {
-                DeletingDialog(title = "Pozmak isleyanizmi",
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
                     onConfirm = {
                         val indx = songs.indexOf(selectedSong!!)
                         Log.e("myLog", "SongRowView: $indx")

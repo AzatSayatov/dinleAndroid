@@ -15,8 +15,18 @@ import tm.bent.dinle.ui.util.LocaleHelper
 class DinleApplication : Application() {
 
 
+    companion object {
+        private lateinit var appContext: Context
+
+        fun getAppContext(): Context {
+            return appContext
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+
+        appContext = applicationContext
 
         val factory = MediaController.Builder(
             applicationContext,

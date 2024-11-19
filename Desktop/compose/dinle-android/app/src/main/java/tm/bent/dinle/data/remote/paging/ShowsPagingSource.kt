@@ -7,7 +7,6 @@ import retrofit2.HttpException
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Media
-import tm.bent.dinle.domain.model.Playlist
 import java.io.IOException
 
 

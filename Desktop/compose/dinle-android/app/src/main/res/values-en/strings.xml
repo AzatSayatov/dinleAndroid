@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Diňle</string>
+    <string name="app_name">Diňle-de Hiňlen</string>
     <string name="no_connection">No connection</string>
     <string name="phone_number">Phone number</string>
     <string name="continue_string">Continue</string>
@@ -97,5 +97,6 @@
     <string name="world_top_song">Dünýä TOP</string>
     <string name="tm_top_10">Türkmen TOP 10</string>
     <string name="last_listened">Sonky dinlenenler</string>
+    <string name="pozmak_isleyanizmi">Pozmak isleyanizmi</string>
 
 </resources>

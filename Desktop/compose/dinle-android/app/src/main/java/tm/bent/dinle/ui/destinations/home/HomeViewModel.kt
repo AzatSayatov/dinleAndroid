@@ -18,7 +18,6 @@ import tm.bent.dinle.data.remote.repository.SongRepository
 import tm.bent.dinle.domain.model.Banner
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Home
-import tm.bent.dinle.domain.model.PagingData
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlayerController
@@ -41,7 +40,7 @@ class HomeViewModel @Inject constructor(
     val banners = MutableStateFlow<List<Banner>>(emptyList())
 
     val baseRequest = savedStateHandle.getStateFlow("baseRequest", BaseRequest(
-        pageSize = 100,
+        pageSize = 1000,
         playlistId = "miks"
     ))
 

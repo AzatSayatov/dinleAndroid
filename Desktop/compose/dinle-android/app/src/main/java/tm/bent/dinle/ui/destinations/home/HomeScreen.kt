@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -51,15 +50,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.compose.rememberImagePainter
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.delay
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
@@ -69,7 +66,6 @@ import tm.bent.dinle.ui.components.HeaderView
 import tm.bent.dinle.ui.components.LastListened
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.MediaView
-import tm.bent.dinle.ui.components.MiksView
 import tm.bent.dinle.ui.components.NewsView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.PlaylistView
@@ -481,7 +477,7 @@ fun HomeScreen(
                                                                     playerController
                                                                         .init(
                                                                             globalIndex - 1,
-                                                                            data.toSongList()
+                                                                            data.toSongList().take(10)
                                                                         )
                                                                     songsViewModel.listenedSong(item.toSong().id)
                                                                     playerController.originalTracks.addAll(data.toSongList())

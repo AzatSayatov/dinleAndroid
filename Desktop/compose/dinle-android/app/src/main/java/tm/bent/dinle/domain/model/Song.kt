@@ -1,13 +1,11 @@
 package tm.bent.dinle.domain.model
 
 import android.net.Uri
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import tm.bent.dinle.player.PlayerStates
-import java.lang.Exception
 import javax.annotation.concurrent.Immutable
 
 @Entity

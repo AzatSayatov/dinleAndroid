@@ -4,8 +4,6 @@ package tm.bent.dinle.data.remote.repository
 import android.os.Build
 import android.util.Log
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Path
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreHelper
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.model.Auth

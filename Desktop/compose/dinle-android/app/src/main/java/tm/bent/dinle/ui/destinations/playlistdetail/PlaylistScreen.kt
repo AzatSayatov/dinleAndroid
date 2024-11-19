@@ -1,5 +1,6 @@
 package tm.bent.dinle.ui.destinations.playlistdetail
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +22,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -56,14 +56,14 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Playlist
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.domain.model.mockPlaylist
 import tm.bent.dinle.ui.components.CustomIconButton
+import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
@@ -74,8 +74,10 @@ import tm.bent.dinle.ui.components.toolbar.ScrollStrategy
 import tm.bent.dinle.ui.components.toolbar.rememberCollapsingToolbarScaffoldState
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
+import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.destinations.playlistdetail.PlaylistViewModel.Companion.TYPE_ALBUM
 import tm.bent.dinle.ui.destinations.playlistdetail.PlaylistViewModel.Companion.TYPE_PLAYLIST
+import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.theme.BackgroundGray
 import tm.bent.dinle.ui.theme.Black80
 import tm.bent.dinle.ui.theme.ButtonBackground
@@ -92,6 +94,11 @@ fun PlaylistScreen(
 ) {
 
     val playlistViewModel = hiltViewModel<PlaylistViewModel>()
+    val songsViewModel = hiltViewModel<SongsViewModel>()
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songsD by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -390,6 +397,10 @@ fun PlaylistScreen(
 //                                    )
                                     playerController.init(songs.itemSnapshotList.items.indexOf(song),
                                         songs.itemSnapshotList.items)
+                                },
+                                isDeletingVisible = {
+                                    selectedSong = song
+                                    setDeletingVisible(true)
                                 })
                             HorizontalDivider(
                                 color = Divider, modifier = Modifier.padding(start = 90.dp)
@@ -399,6 +410,21 @@ fun PlaylistScreen(
                     }
                 }
 
+            }
+
+
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songsD.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
             }
 
             if (showMoreDialog && selectedSong != null) {
@@ -421,7 +447,9 @@ fun PlaylistScreen(
                     onDismissRequest = {
                         showMoreDialog = false
                     },
-                    onLike = {},
+                    onLike = {
+                        songsViewModel.likeSong(selectedSong!!.id)
+                    },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))
 

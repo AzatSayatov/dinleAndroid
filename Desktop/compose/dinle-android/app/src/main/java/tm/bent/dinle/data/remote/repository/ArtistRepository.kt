@@ -5,15 +5,11 @@ import androidx.paging.PagingConfig
 import tm.bent.dinle.data.remote.paging.ArtistsPagingSource
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.dao.SongDao
-import tm.bent.dinle.domain.model.Artist
 import tm.bent.dinle.domain.model.ArtistDetail
 import tm.bent.dinle.domain.model.ArtistInfo
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.BaseResponse
-import tm.bent.dinle.domain.model.PagingResponse
-import tm.bent.dinle.domain.model.SearchResponse
 import tm.bent.dinle.domain.model.Song
-import java.util.Date
 import javax.inject.Inject
 
 

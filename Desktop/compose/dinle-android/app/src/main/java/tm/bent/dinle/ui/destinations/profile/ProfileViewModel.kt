@@ -5,15 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import tm.bent.dinle.BuildConfig
+import tm.bent.dinle.hinlen.BuildConfig
 import tm.bent.dinle.MainActivity
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants.LANGUAGE_KEY
@@ -91,6 +87,7 @@ class ProfileViewModel @Inject constructor(
             try {
                 userRepository.logout()
                 restartApplication(context)
+//                clearUserData()
                 Log.i("LogOut", "logout: boldy")
             } catch (e: Exception) {
                 Log.e("TAG", "logout: ${e.message}")

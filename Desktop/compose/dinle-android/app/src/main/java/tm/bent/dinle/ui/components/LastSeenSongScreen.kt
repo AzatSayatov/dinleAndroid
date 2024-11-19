@@ -1,7 +1,7 @@
 package tm.bent.dinle.ui.components
 
+import android.util.Log
 import androidx.compose.runtime.Composable
-import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,16 +24,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
-import tm.bent.dinle.ui.components.SimpleTopAppBar
-import tm.bent.dinle.ui.components.SongRowView
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.components.bottomsheet.SongActionsBottomSheet
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
+import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.destinations.home.HomeViewModel
 import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.util.ShareUtils
@@ -48,11 +46,19 @@ fun LastSeenSongs(
 
 
     val songsViewModel = hiltViewModel<SongsViewModel>()
+
+
     val playerController = songsViewModel.getPlayerController()
 
     val homeViewModel = hiltViewModel<HomeViewModel>()
     val context = LocalContext.current
     val downloadTracker = homeViewModel.getDownloadTracker()
+
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songs by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
+
 
 
     val lazyListState = rememberLazyListState()
@@ -70,9 +76,10 @@ fun LastSeenSongs(
     val lastSeenSongs by songsViewModel.lastSeenSongs.collectAsState()
 
 
+
     Scaffold(
         topBar = {
-            SimpleTopAppBar("Sonky denlenenler") {
+            SimpleTopAppBar(stringResource(id = R.string.last_listened)) {
                 navigator.navigateUp()
             }
         },
@@ -114,10 +121,27 @@ fun LastSeenSongs(
                                 )
                                 playerController.onTrackClick(song)
                             },
+                            isDeletingVisible = {
+                                selectedSong = song
+                                setDeletingVisible(true)
+                            }
                         )
                     }
 
                 }
+            }
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songs.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
             }
 
             if (showMoreDialog && selectedSong != null) {

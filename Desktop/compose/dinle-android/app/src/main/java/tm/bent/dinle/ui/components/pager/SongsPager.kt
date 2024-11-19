@@ -1,6 +1,5 @@
 package tm.bent.dinle.ui.components.pager
 
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

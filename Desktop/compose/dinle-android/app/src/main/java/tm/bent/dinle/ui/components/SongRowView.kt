@@ -1,6 +1,5 @@
 package tm.bent.dinle.ui.components
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,24 +14,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -52,12 +47,11 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlayerController
 import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
-import tm.bent.dinle.ui.theme.Primary1
 import tm.bent.dinle.ui.theme.RobotoFlex
 import tm.bent.dinle.ui.theme.Subtitle
 
@@ -74,6 +68,7 @@ fun SongRowView(
     onDownload: () -> Unit = {},
     onMoreClick: () -> Unit,
     onClick: () -> Unit,
+    isDeletingVisible: () -> Unit,
 ) {
 
     val composition by rememberLottieComposition(
@@ -245,6 +240,8 @@ fun SongRowView(
                                 if (!isInArray){
                                     onDownload()
                                     downloadTracker?.download(song.toDownloadMediaItem())
+                                }else{
+                                    isDeletingVisible()
                                 }
 
                             },

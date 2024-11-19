@@ -73,7 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.ui.components.CustomIconButton
 import tm.bent.dinle.ui.theme.Black80

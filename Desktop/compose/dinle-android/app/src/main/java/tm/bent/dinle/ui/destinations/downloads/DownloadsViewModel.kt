@@ -2,22 +2,17 @@ package tm.bent.dinle.ui.destinations.downloads
 
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.invoke
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import tm.bent.dinle.data.remote.repository.SongRepository
-import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlayerController

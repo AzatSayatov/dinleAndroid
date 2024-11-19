@@ -1,20 +1,32 @@
 package tm.bent.dinle.di
 
+import android.content.Context
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import tm.bent.dinle.data.remote.interceptor.LanguageInterceptor
 import tm.bent.dinle.data.remote.interceptor.SynchronizedAuthenticator
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.data.remote.service.TokenRefreshService
+import java.io.InputStream
+import java.security.KeyStore
+import java.security.SecureRandom
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManager
+import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
 
 
 @Qualifier
@@ -34,30 +46,58 @@ object NetworkModule {
     @Provides
     fun provideOkHttpClientWithAuth(
         SynchronizedAuthenticator: SynchronizedAuthenticator,
-        languageInterceptor: LanguageInterceptor
+        languageInterceptor: LanguageInterceptor,
     ): OkHttpClient {
 
-//        val interceptor = HttpLoggingInterceptor()
-//        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+
+
+        val trustAllCertificates: TrustManager = object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate>? = emptyArray()
+        }
+
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, arrayOf(trustAllCertificates), SecureRandom())
 
         return OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+//            .certificatePinner()
+//            .sslSocketFactory(sslContext.socketFactory, trustAllCertificates as X509TrustManager)
+//            .hostnameVerifier{_,_ -> true}
             .addInterceptor(SynchronizedAuthenticator)
-//            .addInterceptor(interceptor)
             .addInterceptor(languageInterceptor)
+            .addInterceptor(interceptor)
             .build()
     }
 
     @OtherInterceptorOkHttpClient
     @Provides
     fun provideOkHttpClient(languageInterceptor: LanguageInterceptor): OkHttpClient {
+
+        val trustAllCertificates: TrustManager = object : X509TrustManager {
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {}
+            override fun getAcceptedIssuers(): Array<X509Certificate>? = null
+        }
+
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, arrayOf(trustAllCertificates), SecureRandom())
+
+        val sslSocketFactory = sslContext.socketFactory
+
         return OkHttpClient
             .Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
+//            .sslSocketFactory(sslSocketFactory, trustAllCertificates as X509TrustManager)
+//            .hostnameVerifier{_,_ -> true}
             .addInterceptor(languageInterceptor)
             .build()
     }
@@ -94,8 +134,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-
-
     fun provideApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }

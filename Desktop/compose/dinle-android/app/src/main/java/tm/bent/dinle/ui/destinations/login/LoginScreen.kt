@@ -1,6 +1,5 @@
 package tm.bent.dinle.ui.destinations.login
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -60,7 +59,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.launch
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.destinations.OTPScreenDestination
 import tm.bent.dinle.ui.destinations.devices.DeviceViewModel
@@ -111,10 +110,8 @@ fun LoginScreen(
                     uiState.errorMessage
                 )
             }
-
             loginViewModel.updateToDefault()
         }
-
     }
 
     LaunchedEffect(uiState.success){
@@ -163,8 +160,8 @@ fun LoginScreen(
                 contentAlignment = Alignment.Center,
             ){
                 Image(
-                    modifier = Modifier.height(50.dp),
-                    painter = painterResource(id = R.drawable.img_logo),
+                    modifier = Modifier.height(70.dp),
+                    painter = painterResource(id = R.drawable.img_logo_new),
                     contentDescription = "image description",
                 )
             }

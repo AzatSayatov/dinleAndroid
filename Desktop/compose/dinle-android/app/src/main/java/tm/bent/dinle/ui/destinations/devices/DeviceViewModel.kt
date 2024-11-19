@@ -14,16 +14,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import tm.bent.dinle.BuildConfig
+import tm.bent.dinle.hinlen.BuildConfig
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreConstants
 import tm.bent.dinle.data.local.datastore.PreferenceDataStoreHelper
 import tm.bent.dinle.data.remote.repository.UserRepository
 import tm.bent.dinle.data.remote.service.ApiService
-import tm.bent.dinle.domain.model.BaseResponse
 import tm.bent.dinle.domain.model.Device
 import tm.bent.dinle.domain.model.DeviceResponse
 import tm.bent.dinle.ui.states.UIState

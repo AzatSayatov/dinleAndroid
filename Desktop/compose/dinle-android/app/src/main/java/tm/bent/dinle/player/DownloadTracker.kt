@@ -34,7 +34,7 @@ import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.ui.TrackSelectionView
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArraySet
 

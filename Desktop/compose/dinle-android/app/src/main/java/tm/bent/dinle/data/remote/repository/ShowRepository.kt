@@ -2,9 +2,7 @@ package tm.bent.dinle.data.remote.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import tm.bent.dinle.data.remote.paging.AlbumsPagingSource
 import tm.bent.dinle.data.remote.paging.MediaPagingSource
-import tm.bent.dinle.data.remote.paging.PlaylistsPagingSource
 import tm.bent.dinle.data.remote.paging.ShowsPagingSource
 import tm.bent.dinle.data.remote.service.ApiService
 import tm.bent.dinle.domain.model.BaseRequest

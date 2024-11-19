@@ -24,9 +24,7 @@ import tm.bent.dinle.ui.destinations.LibraryScreenDestination
 import tm.bent.dinle.ui.destinations.SearchScreenDestination
 import tm.bent.dinle.ui.startAppDestination
 
-import tm.bent.dinle.ui.theme.Inactive
 import tm.bent.dinle.ui.theme.Inactive2
-import tm.bent.dinle.ui.theme.Inactive3
 
 
 @Composable

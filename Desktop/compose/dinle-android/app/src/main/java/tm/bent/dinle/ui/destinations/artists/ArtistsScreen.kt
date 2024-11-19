@@ -22,7 +22,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.ui.components.ArtistRowView
 import tm.bent.dinle.ui.components.LoadingView
@@ -50,8 +50,6 @@ fun ArtistsScreen(
         Log.e("ARTISTS", "ArtistsScreen: $baseRequest")
         artistsViewModel.setBaseRequest(baseRequest)
     }
-
-
     val artists = artistsViewModel.artists.collectAsLazyPagingItems()
 
     val isRefreshing = artists.loadState.refresh is LoadState.Loading
@@ -110,21 +108,26 @@ fun ArtistsScreen(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     contentPadding = PaddingValues(vertical = 10.dp)
                 ) {
-                    items(artists.itemCount) { index ->
-                        val artist = artists[index]!!
+                    try {
+                        items(artists.itemCount) { index ->
+                            val artist = artists[index]!!
 
-                        ArtistRowView(
-                            artist = artist,
-                            onClick = {
-                                navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = artist.id )))
-                            }
-                        )
-                        HorizontalDivider(
-                            color = Divider,
-                            modifier = Modifier
-                                .padding(start = 90.dp)
-                        )
+                            ArtistRowView(
+                                artist = artist,
+                                onClick = {
+                                    navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = artist.id )))
+                                }
+                            )
+                            HorizontalDivider(
+                                color = Divider,
+                                modifier = Modifier
+                                    .padding(start = 90.dp)
+                            )
+                        }
+                    }catch (e: Exception){
+
                     }
+
 
                 }
             }
@@ -198,22 +201,30 @@ fun SearchArtists(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     contentPadding = PaddingValues(vertical = 10.dp)
                 ) {
-                    items(artists.itemCount) { index ->
-                        val artist = artists[index]!!
-
-                        ArtistRowView(
-                            artist = artist,
-                            onClick = {
-                                navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = artist.id )))
+                    try {
+                        if (artists != null){
+                            items(artists.itemCount) { index ->
+                                val artist = artists[index]!!
+                                if (artists != null){
+                                    ArtistRowView(
+                                        artist = artist,
+                                        onClick = {
+                                            navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = artist.id )))
+                                        }
+                                    )
+                                    HorizontalDivider(
+                                        color = Divider,
+                                        modifier = Modifier
+                                            .padding(start = 90.dp)
+                                    )
+                                }else{
+                                    NotFoundView(Modifier.fillMaxSize())
+                                }
                             }
-                        )
-                        HorizontalDivider(
-                            color = Divider,
-                            modifier = Modifier
-                                .padding(start = 90.dp)
-                        )
-                    }
+                        }
+                    }catch (e: Exception){
 
+                    }
                 }
             }
             PullRefreshIndicator(
@@ -221,8 +232,5 @@ fun SearchArtists(
                 pullRefreshState,
             )
         }
-
     }
-
-
 }

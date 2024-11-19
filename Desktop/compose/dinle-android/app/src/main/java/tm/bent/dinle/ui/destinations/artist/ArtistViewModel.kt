@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import tm.bent.dinle.data.remote.repository.ArtistRepository
 import tm.bent.dinle.domain.model.ArtistDetail
 import tm.bent.dinle.domain.model.BaseRequest
+import tm.bent.dinle.domain.model.BaseResponse
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.player.DownloadTracker
 import tm.bent.dinle.player.PlayerController
@@ -32,6 +33,9 @@ class ArtistViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UIState<ArtistDetail>())
     val uiState: StateFlow<UIState<ArtistDetail>> = _uiState
 
+    private val _artistIds = MutableStateFlow<List<String>>(emptyList())
+    val artistIds: StateFlow<List<String>> = _artistIds
+
     fun getPlayerController() = playerController
 
     fun getDownloadTracker() = downloadTracker
@@ -41,7 +45,7 @@ class ArtistViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val res = artistRepository.getArtistDetail(body)
-                Log.e("TAG", "search: "+res )
+                Log.e("TAG", "search: " + res)
                 _uiState.update { it.updateToLoaded(res.data) }
             } catch (e: Exception) {
                 Log.e("TAG", "search: " + e.message)
@@ -50,45 +54,68 @@ class ArtistViewModel @Inject constructor(
         }
     }
 
+fun isFollowing(artistId: String): Boolean {
+    return _artistIds.value.contains(artistId)
+}
 
 
-
-    fun listen(id:String, download:Boolean = false){
-        viewModelScope.launch {
-            try {
-                artistRepository.listen(id, download)
-            }catch (e:Exception){
-                Log.e("TAG", "listen: "+e.message )
-            }
+// Добавление ID артиста в список
+fun addArtistId(artistId: String) {
+    viewModelScope.launch {
+        val currentList = _artistIds.value.toMutableList()
+        if (!currentList.contains(artistId)) {  // Проверяем, чтобы не добавлять дубли
+            currentList.add(artistId)
+            _artistIds.update { currentList }
         }
     }
+}
 
-    fun subscribe(id:String){
-        viewModelScope.launch {
-            try {
-                artistRepository.subscribe(BaseRequest(artistId = id))
-            }catch (e:Exception){
-                Log.e("TAG", "subscribe: "+e.message )
-            }
+// Удаление ID артиста из списка
+fun removeArtistId(artistId: String) {
+    viewModelScope.launch {
+        val updatedList = _artistIds.value.filterNot { it == artistId }
+        _artistIds.update { updatedList }
+    }
+}
+
+
+fun listen(id: String, download: Boolean = false) {
+    viewModelScope.launch {
+        try {
+            artistRepository.listen(id, download)
+        } catch (e: Exception) {
+            Log.e("TAG", "listen: " + e.message)
         }
     }
-    fun deleteSong(song: Song){
-        viewModelScope.launch {
-            try {
-                artistRepository.deleteSong(song)
-            }catch (e: Exception){
+}
 
-            }
+fun subscribe(id: String) {
+    viewModelScope.launch {
+        try {
+            artistRepository.subscribe(BaseRequest(artistId = id))
+        } catch (e: Exception) {
+            Log.e("TAG", "subscribe: " + e.message)
         }
     }
+}
 
-    fun insertSong(song: Song) {
-        viewModelScope.launch {
-            (Dispatchers.IO){
-                artistRepository.insertSong(song = song)
+fun deleteSong(song: Song) {
+    viewModelScope.launch {
+        try {
+            artistRepository.deleteSong(song)
+        } catch (e: Exception) {
 
-            }
         }
     }
+}
+
+fun insertSong(song: Song) {
+    viewModelScope.launch {
+        (Dispatchers.IO){
+            artistRepository.insertSong(song = song)
+
+        }
+    }
+}
 
 }

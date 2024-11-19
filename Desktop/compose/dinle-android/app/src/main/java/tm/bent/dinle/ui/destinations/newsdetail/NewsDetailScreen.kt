@@ -42,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_NEWS_URL
 import tm.bent.dinle.ui.components.CustomIconButton
 import tm.bent.dinle.ui.components.LoadingView

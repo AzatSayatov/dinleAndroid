@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import tm.bent.dinle.domain.model.Genre
-import tm.bent.dinle.ui.theme.Inactive
 import tm.bent.dinle.ui.theme.RobotoFlex
 
 

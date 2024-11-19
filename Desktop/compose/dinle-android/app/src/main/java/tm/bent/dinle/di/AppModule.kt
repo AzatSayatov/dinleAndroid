@@ -5,7 +5,9 @@ package tm.bent.dinle.di
 import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
+import android.os.Build
 import androidx.annotation.OptIn
+import androidx.annotation.RequiresApi
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.database.DatabaseProvider
 import androidx.media3.database.StandaloneDatabaseProvider
@@ -81,7 +83,8 @@ class AppModule {
     }
 
     @Provides
-    fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil = DataStoreUtil(context)
+    fun provideDataStoreUtil(@ApplicationContext context: Context): DataStoreUtil =
+        DataStoreUtil(context)
 
     @OptIn(UnstableApi::class)
     @Provides
@@ -269,8 +272,6 @@ class AppModule {
 
         return player
     }
-
-
     @Provides
     @Singleton
     fun provideMyPlayer(@AudioPlayer player: ExoPlayer): MyPlayer {

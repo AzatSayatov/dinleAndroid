@@ -1,5 +1,6 @@
 package tm.bent.dinle.ui.destinations.genre
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -54,13 +57,13 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.SubcomposeAsyncImage
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import tm.bent.dinle.R
-import tm.bent.dinle.di.BASE_URL
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.di.SHARE_SONG_URL
 import tm.bent.dinle.domain.model.BaseRequest
 import tm.bent.dinle.domain.model.Genre
 import tm.bent.dinle.domain.model.Song
 import tm.bent.dinle.domain.model.mockGenre
+import tm.bent.dinle.ui.components.DeletingDialog
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.NoConnectionView
 import tm.bent.dinle.ui.components.NotFoundView
@@ -71,13 +74,14 @@ import tm.bent.dinle.ui.components.toolbar.ScrollStrategy
 import tm.bent.dinle.ui.components.toolbar.rememberCollapsingToolbarScaffoldState
 import tm.bent.dinle.ui.destinations.ArtistScreenDestination
 import tm.bent.dinle.ui.destinations.SongInfoScreenDestination
+import tm.bent.dinle.ui.destinations.downloads.DownloadsViewModel
 import tm.bent.dinle.ui.destinations.playlistdetail.PlaylistViewModel
+import tm.bent.dinle.ui.destinations.songs.SongsViewModel
 import tm.bent.dinle.ui.theme.BackgroundGray
 import tm.bent.dinle.ui.theme.Black80
 import tm.bent.dinle.ui.theme.ButtonBackground
 import tm.bent.dinle.ui.theme.Divider
 import tm.bent.dinle.ui.theme.Inactive
-import tm.bent.dinle.ui.theme.Inactive2
 import tm.bent.dinle.ui.util.ShareUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,6 +93,7 @@ fun GenreScreen(
 ) {
 
     val playlistViewModel = hiltViewModel<PlaylistViewModel>()
+    val songsViewModel = hiltViewModel<SongsViewModel>()
 
     val context = LocalContext.current
 
@@ -100,6 +105,10 @@ fun GenreScreen(
     val downloadTracker = playlistViewModel.getDownloadTracker()
 
     val songs = playlistViewModel.songs.collectAsLazyPagingItems()
+
+    val downloadsViewModel = hiltViewModel<DownloadsViewModel>()
+    val songsD by downloadsViewModel.getDownloadedSongs().collectAsState(initial = emptyList())
+    val (isDeletingVisible, setDeletingVisible) = remember { mutableStateOf(false) }
 
     val state = rememberCollapsingToolbarScaffoldState()
     val moreDialogState = rememberModalBottomSheetState()
@@ -124,19 +133,40 @@ fun GenreScreen(
 
                     contentAlignment = Alignment.Center
                 ) {
-                    SubcomposeAsyncImage(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .blur(radius = 100.dp)
-                            .aspectRatio(0.8f)
-                            .graphicsLayer {
-                                alpha = state.toolbarState.progress
-                            }
-                            .background(Inactive),
-                        model = genre.getImage(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                            .aspectRatio(0.9f)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Black.copy(alpha = 0.3f),
+                                        Color.Transparent
+                                    )
+                                )
+                            )
                     )
+                    {
+                        SubcomposeAsyncImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .blur(radius = 100.dp)
+                                .aspectRatio(0.8f)
+                                .graphicsLayer {
+                                    alpha = state.toolbarState.progress
+                                }
+                                .background(Inactive),
+                            model = genre.getImage(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(Color.Black.copy(alpha = 0.5f)) // Настройте степень прозрачности
+                        )
+                    }
 
                     Box(
                         modifier = Modifier
@@ -149,8 +179,7 @@ fun GenreScreen(
                     Column(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .padding(horizontal = 20.dp)
-                            .padding(top = 10.dp, bottom = 20.dp),
+                            .padding(top = 35.dp, bottom = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
@@ -206,7 +235,7 @@ fun GenreScreen(
                                     containerColor = ButtonBackground
                                 ),
                                 onClick = {
-                                    if (songs.itemSnapshotList.items.isNotEmpty()){
+                                    if (songs.itemSnapshotList.items.isNotEmpty()) {
                                         playerController.init(0, songs.itemSnapshotList.items)
                                     }
                                 },
@@ -230,8 +259,11 @@ fun GenreScreen(
                                     containerColor = ButtonBackground
                                 ),
                                 onClick = {
-                                    if (songs.itemSnapshotList.items.isNotEmpty()){
-                                        playerController.init(0, songs.itemSnapshotList.items.shuffled())
+                                    if (songs.itemSnapshotList.items.isNotEmpty()) {
+                                        playerController.init(
+                                            0,
+                                            songs.itemSnapshotList.items.shuffled()
+                                        )
                                     }
                                 },
 
@@ -251,7 +283,7 @@ fun GenreScreen(
 
                 Row(
                     modifier = Modifier
-                        .padding(top = padding.calculateTopPadding())
+                        .padding(top = padding.calculateTopPadding(), bottom = 10.dp)
                         .fillMaxWidth()
                         .pin(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -298,15 +330,16 @@ fun GenreScreen(
                                 tint = Color.White
                             )
                         }
-                    } else {
-                        IconButton(modifier = Modifier.padding(vertical = 8.dp), onClick = { }) {
-                            Icon(
-                                tint = Color.White,
-                                painter = painterResource(id = R.drawable.ic_more_vert),
-                                contentDescription = null
-                            )
-                        }
                     }
+//                    else {
+//                        IconButton(modifier = Modifier.padding(vertical = 8.dp), onClick = { }) {
+//                            Icon(
+//                                tint = Color.White,
+//                                painter = painterResource(id = R.drawable.ic_more_vert),
+//                                contentDescription = null
+//                            )
+//                        }
+//                    }
 
                 }
             }) {
@@ -347,9 +380,15 @@ fun GenreScreen(
 //                                    playerController.init(
 //                                        song, songs.itemSnapshotList.items
 //                                    )
-                                          playerController.init(songs.itemSnapshotList.items.indexOf(song),
-                                              songs.itemSnapshotList.items)
+                                    playerController.init(
+                                        songs.itemSnapshotList.items.indexOf(song),
+                                        songs.itemSnapshotList.items
+                                    )
                                 },
+                                isDeletingVisible = {
+                                    selectedSong = song
+                                    setDeletingVisible(true)
+                                }
                             )
                             HorizontalDivider(
                                 color = Divider, modifier = Modifier.padding(start = 90.dp)
@@ -361,6 +400,20 @@ fun GenreScreen(
 
             }
 
+            if (isDeletingVisible) {
+                DeletingDialog(title = stringResource(R.string.pozmak_isleyanizmi),
+                    onConfirm = {
+                        val indx = songsD.indexOf(selectedSong!!)
+                        Log.e("myLog", "SongRowView: $indx")
+                        downloadsViewModel.removeSongAt(indx)
+                        setDeletingVisible(false)
+                        selectedSong!!.isPlaying() == false
+                    },
+                    onDismissRequest = {
+                        setDeletingVisible(false)
+                    })
+            }
+
             if (showMoreDialog && selectedSong != null) {
                 SongActionsBottomSheet(song = selectedSong!!,
                     sheetState = moreDialogState,
@@ -370,10 +423,10 @@ fun GenreScreen(
                     downloadTracker = downloadTracker,
                     playerController = playerController,
                     onNavigateToInfo = {
-                        selectedSong?.id?.let { navigator.navigate( SongInfoScreenDestination(id = it)) }
+                        selectedSong?.id?.let { navigator.navigate(SongInfoScreenDestination(id = it)) }
                     },
                     onDownload = {
-                        selectedSong?.let {song ->
+                        selectedSong?.let { song ->
                             playlistViewModel.listen(song.id, true)
                             playlistViewModel.insertSong(song)
 
@@ -382,7 +435,9 @@ fun GenreScreen(
                     onDismissRequest = {
                         showMoreDialog = false
                     },
-                    onLike = {},
+                    onLike = {
+                        songsViewModel.likeSong(selectedSong!!.id)
+                    },
                     onNavigateToArtist = {
                         navigator.navigate(ArtistScreenDestination(BaseRequest(artistId = selectedSong!!.artistId)))
 

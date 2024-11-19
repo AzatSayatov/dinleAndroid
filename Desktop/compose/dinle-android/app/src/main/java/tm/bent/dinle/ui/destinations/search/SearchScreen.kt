@@ -12,17 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -42,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -57,10 +51,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import kotlinx.coroutines.delay
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import tm.bent.dinle.Search
-import tm.bent.dinle.domain.model.SongResponce
 import tm.bent.dinle.ui.components.GenreView
 import tm.bent.dinle.ui.components.LoadingView
 import tm.bent.dinle.ui.components.NoConnectionView
@@ -76,9 +68,7 @@ import tm.bent.dinle.ui.destinations.ShazamScreenDestination
 import tm.bent.dinle.ui.destinations.genre.GenreViewModel
 import tm.bent.dinle.ui.theme.Border
 import tm.bent.dinle.ui.theme.Button1
-import tm.bent.dinle.ui.theme.Inactive2
 import tm.bent.dinle.ui.theme.RobotoFlex
-import tm.bent.dinle.ui.theme.Surface2
 import tm.bent.dinle.ui.theme.WhiteMilk
 import tm.bent.dinle.ui.util.clickWithoutIndication
 

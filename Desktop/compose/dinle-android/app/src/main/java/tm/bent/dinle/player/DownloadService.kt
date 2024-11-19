@@ -14,7 +14,7 @@ import androidx.media3.exoplayer.scheduler.PlatformScheduler
 import androidx.media3.exoplayer.scheduler.Requirements.RequirementFlags
 import androidx.media3.exoplayer.scheduler.Scheduler
 import dagger.hilt.android.AndroidEntryPoint
-import tm.bent.dinle.R
+import tm.bent.dinle.hinlen.R
 import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
